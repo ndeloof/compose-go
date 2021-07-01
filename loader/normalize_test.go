@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/compose-spec/compose-go/types"
-	"gopkg.in/yaml.v2"
 	"gotest.tools/v3/assert"
 )
 
@@ -81,9 +80,9 @@ networks:
 `, "/some/path/foo", absFolder), "/", string(filepath.Separator))
 	err := normalize(&project)
 	assert.NilError(t, err)
-	marshal, err := yaml.Marshal(project)
+	buf, err := project.MarshalYAML()
 	assert.NilError(t, err)
-	assert.DeepEqual(t, expected, string(marshal))
+	assert.DeepEqual(t, expected, string(buf))
 }
 
 func TestNormalizeAbsolutePaths(t *testing.T) {

@@ -25,8 +25,8 @@ import (
 	"github.com/compose-spec/compose-go/types"
 )
 
-func fullExampleConfig(workingDir, homeDir string) *types.Config {
-	return &types.Config{
+func fullExampleProject(workingDir, homeDir string) *types.Project {
+	return &types.Project{
 		Services: services(workingDir, homeDir),
 		Networks: networks(),
 		Volumes:  volumes(),

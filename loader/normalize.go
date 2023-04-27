@@ -166,6 +166,16 @@ func Normalize(project *types.Project, resolvePaths bool) error {
 		}
 	}
 
+	for s, config := range project.Secrets {
+		if config.Type == "" && config.File != "" {
+			config.Type = "file"
+		}
+		if config.Type == "" && config.Environment != "" {
+			config.Type = "environment"
+		}
+		project.Secrets[s] = config
+	}
+
 	setNameFromKey(project)
 
 	return nil

@@ -684,6 +684,7 @@
       "type": "object",
       "properties": {
         "name": {"type": "string"},
+        "type": {"type": "string"},
         "environment": {"type": "string"},
         "file": {"type": "string"},
         "external": {

@@ -979,6 +979,7 @@ type CredentialSpecConfig struct {
 // FileObjectConfig is a config type for a file used by a service
 type FileObjectConfig struct {
 	Name           string            `yaml:",omitempty" json:"name,omitempty"`
+	Type           string            `yaml:",omitempty" json:"name,omitempty"`
 	File           string            `yaml:",omitempty" json:"file,omitempty"`
 	Environment    string            `yaml:",omitempty" json:"environment,omitempty"`
 	External       External          `yaml:",omitempty" json:"external,omitempty"`

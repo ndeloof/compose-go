@@ -112,8 +112,19 @@ func checkConsistency(project *types.Project) error {
 		if secret.External.External {
 			continue
 		}
-		if secret.File == "" && secret.Environment == "" {
-			return errors.Wrap(errdefs.ErrInvalid, fmt.Sprintf("secret %q must declare either `file` or `environment`", name))
+		switch secret.Type {
+		case "":
+			if secret.File == "" && secret.Environment == "" {
+				return errors.Wrap(errdefs.ErrInvalid, fmt.Sprintf("secret %q must declare either `file` or `environment`", name))
+			}
+		case "file":
+			if secret.File == "" {
+				return errors.Wrap(errdefs.ErrInvalid, fmt.Sprintf("secret %q of type file must declare `file``", name))
+			}
+		case "environment":
+			if secret.Environment == "" {
+				return errors.Wrap(errdefs.ErrInvalid, fmt.Sprintf("secret %q of type environment must declare `environment``", name))
+			}
 		}
 	}
 

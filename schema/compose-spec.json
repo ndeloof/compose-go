@@ -324,6 +324,7 @@
           "always", "never", "if_not_present", "build", "missing"
         ]},
         "read_only": {"type": "boolean"},
+        "readiness": {"$ref": "#/definitions/healthcheck"},
         "restart": {"type": "string"},
         "runtime": {
           "type": "string"

@@ -166,6 +166,7 @@ type ServiceConfig struct {
 	Privileged      bool                             `yaml:"privileged,omitempty" json:"privileged,omitempty"`
 	PullPolicy      string                           `yaml:"pull_policy,omitempty" json:"pull_policy,omitempty"`
 	ReadOnly        bool                             `yaml:"read_only,omitempty" json:"read_only,omitempty"`
+	Readiness       *HealthCheckConfig               `yaml:"readiness,omitempty" json:"readiness,omitempty"`
 	Restart         string                           `yaml:"restart,omitempty" json:"restart,omitempty"`
 	Runtime         string                           `yaml:"runtime,omitempty" json:"runtime,omitempty"`
 	Scale           int                              `yaml:"scale,omitempty" json:"scale,omitempty"`

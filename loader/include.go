@@ -45,6 +45,7 @@ func ApplyInclude(ctx context.Context, configDetails types.ConfigDetails, model 
 		return err
 	}
 	for _, r := range includeConfig {
+		ctx := withReason(ctx, "include")
 		for i, p := range r.Path {
 			for _, loader := range options.ResourceLoaders {
 				if loader.Accept(p) {

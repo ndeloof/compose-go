@@ -46,6 +46,7 @@ func ApplyExtends(ctx context.Context, dict map[string]any, workingdir string, o
 		ref := extends["service"].(string)
 		if file, ok := extends["file"]; ok {
 			path := file.(string)
+			ctx := withReason(ctx, fmt.Sprintf("%s extends %s", name, ref))
 			for _, loader := range opts.ResourceLoaders {
 				if !loader.Accept(path) {
 					continue

@@ -40,6 +40,9 @@ import (
 	"github.com/compose-spec/compose-go/v2/validation"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/trace/noop"
 	"gopkg.in/yaml.v3"
 )
 
@@ -274,12 +277,31 @@ func LoadWithContext(ctx context.Context, configDetails types.ConfigDetails, opt
 	return load(ctx, configDetails, opts, nil)
 }
 
+func Tracer(ctx context.Context) trace.Tracer {
+	tracer, ok := ctx.Value(consts.TelemetryKey{}).(trace.Tracer)
+	if !ok {
+		return noop.Tracer{}
+	}
+	return tracer
+}
+
 func loadYamlModel(ctx context.Context, config types.ConfigDetails, opts *Options, ct *cycleTracker, included []string) (map[string]interface{}, error) {
 	var (
 		dict = map[string]interface{}{}
 		err  error
 	)
+
+	tracer := Tracer(ctx)
+	ctx, loadSpan := tracer.Start(ctx, "compose/load")
+	defer loadSpan.End()
 	for _, file := range config.ConfigFiles {
+		attributes := []attribute.KeyValue{
+			attribute.String("file", file.Filename),
+		}
+		if reason := ctx.Value(reasonKey{}); reason != nil {
+			attributes = append(attributes, attribute.String("reason", reason.(string)))
+		}
+		ctx, span := tracer.Start(ctx, "compose/load-yaml", trace.WithAttributes(attributes...))
 		fctx := context.WithValue(ctx, consts.ComposeFileKey{}, file.Filename)
 		if len(file.Content) == 0 && file.Config == nil {
 			content, err := os.ReadFile(file.Filename)
@@ -351,6 +373,7 @@ func loadYamlModel(ctx context.Context, config types.ConfigDetails, opts *Option
 				return nil, err
 			}
 		}
+		span.End()
 	}
 
 	dict, err = override.EnforceUnicity(dict)

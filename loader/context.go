@@ -14,17 +14,13 @@
    limitations under the License.
 */
 
-package consts
+package loader
 
-const (
-	ComposeProjectName   = "COMPOSE_PROJECT_NAME"
-	ComposePathSeparator = "COMPOSE_PATH_SEPARATOR"
-	ComposeFilePath      = "COMPOSE_FILE"
-	ComposeProfiles      = "COMPOSE_PROFILES"
-)
+import "context"
 
-const Extensions = "#extensions" // Using # prefix, we prevent risk to conflict with an actual yaml key
+type reasonKey struct{}
 
-type ComposeFileKey struct{}
-
-type TelemetryKey struct{}
+// withReason returns a copy of parent in which a reason is tracked
+func withReason(ctx context.Context, reason string) context.Context {
+	return context.WithValue(ctx, reasonKey{}, reason)
+}

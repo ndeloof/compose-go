@@ -150,8 +150,10 @@ func makeProject() Project {
 				Profiles: []string{"zot"},
 			},
 			"service_6": ServiceConfig{
-				Name:  "service_6",
-				Links: []string{"service_1"},
+				Name: "service_6",
+				ContainerConfig: ContainerConfig{
+					Links: []string{"service_1"},
+				},
 			},
 		},
 		Networks: Networks{},

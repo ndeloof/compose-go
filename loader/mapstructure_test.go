@@ -31,6 +31,7 @@ func TestDecodeMapStructure(t *testing.T) {
 		Result:     &target,
 		TagName:    "yaml",
 		Metadata:   &data,
+		Squash:     true,
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(decoderHook),
 	}
 	decoder, err := mapstructure.NewDecoder(config)

@@ -25,41 +25,41 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-// ServiceConfig is the configuration of one service
-type ServiceConfig struct {
-	Name     string   `yaml:"name,omitempty" json:"-"`
-	Profiles []string `yaml:"profiles,omitempty" json:"profiles,omitempty"`
-
-	Annotations  Mapping        `yaml:"annotations,omitempty" json:"annotations,omitempty"`
-	Attach       *bool          `yaml:"attach,omitempty" json:"attach,omitempty"`
-	Build        *BuildConfig   `yaml:"build,omitempty" json:"build,omitempty"`
-	Develop      *DevelopConfig `yaml:"develop,omitempty" json:"develop,omitempty"`
-	BlkioConfig  *BlkioConfig   `yaml:"blkio_config,omitempty" json:"blkio_config,omitempty"`
-	CapAdd       []string       `yaml:"cap_add,omitempty" json:"cap_add,omitempty"`
-	CapDrop      []string       `yaml:"cap_drop,omitempty" json:"cap_drop,omitempty"`
-	CgroupParent string         `yaml:"cgroup_parent,omitempty" json:"cgroup_parent,omitempty"`
-	Cgroup       string         `yaml:"cgroup,omitempty" json:"cgroup,omitempty"`
-	CPUCount     int64          `yaml:"cpu_count,omitempty" json:"cpu_count,omitempty"`
-	CPUPercent   float32        `yaml:"cpu_percent,omitempty" json:"cpu_percent,omitempty"`
-	CPUPeriod    int64          `yaml:"cpu_period,omitempty" json:"cpu_period,omitempty"`
-	CPUQuota     int64          `yaml:"cpu_quota,omitempty" json:"cpu_quota,omitempty"`
-	CPURTPeriod  int64          `yaml:"cpu_rt_period,omitempty" json:"cpu_rt_period,omitempty"`
-	CPURTRuntime int64          `yaml:"cpu_rt_runtime,omitempty" json:"cpu_rt_runtime,omitempty"`
-	CPUS         float32        `yaml:"cpus,omitempty" json:"cpus,omitempty"`
-	CPUSet       string         `yaml:"cpuset,omitempty" json:"cpuset,omitempty"`
-	CPUShares    int64          `yaml:"cpu_shares,omitempty" json:"cpu_shares,omitempty"`
-
+// ExecConfig is the configuration for a command ran inside a container
+type ExecConfig struct {
 	// Command for the service containers.
 	// If set, overrides COMMAND from the image.
-	//
 	// Set to `[]` or an empty string to clear the command from the image.
-	Command ShellCommand `yaml:"command,omitempty" json:"command"` // NOTE: we can NOT omitempty for JSON! see ShellCommand type for details.
+	Command     ShellCommand      `yaml:"command,omitempty" json:"command"` // NOTE: we can NOT omitempty for JSON! see ShellCommand type for details.
+	Environment MappingWithEquals `yaml:"environment,omitempty" json:"environment,omitempty"`
+	EnvFile     StringList        `yaml:"env_file,omitempty" json:"env_file,omitempty"`
+	User        string            `yaml:"user,omitempty" json:"user,omitempty"`
+	WorkingDir  string            `yaml:"working_dir,omitempty" json:"working_dir,omitempty"`
+}
 
+// ContainerConfig is the configuration of a container
+type ContainerConfig struct {
+	ExecConfig        `yaml:",inline"`
+	Annotations       Mapping                  `yaml:"annotations,omitempty" json:"annotations,omitempty"`
+	Attach            *bool                    `yaml:"attach,omitempty" json:"attach,omitempty"`
+	Build             *BuildConfig             `yaml:"build,omitempty" json:"build,omitempty"`
+	BlkioConfig       *BlkioConfig             `yaml:"blkio_config,omitempty" json:"blkio_config,omitempty"`
+	CapAdd            []string                 `yaml:"cap_add,omitempty" json:"cap_add,omitempty"`
+	CapDrop           []string                 `yaml:"cap_drop,omitempty" json:"cap_drop,omitempty"`
+	CgroupParent      string                   `yaml:"cgroup_parent,omitempty" json:"cgroup_parent,omitempty"`
+	Cgroup            string                   `yaml:"cgroup,omitempty" json:"cgroup,omitempty"`
+	CPUCount          int64                    `yaml:"cpu_count,omitempty" json:"cpu_count,omitempty"`
+	CPUPercent        float32                  `yaml:"cpu_percent,omitempty" json:"cpu_percent,omitempty"`
+	CPUPeriod         int64                    `yaml:"cpu_period,omitempty" json:"cpu_period,omitempty"`
+	CPUQuota          int64                    `yaml:"cpu_quota,omitempty" json:"cpu_quota,omitempty"`
+	CPURTPeriod       int64                    `yaml:"cpu_rt_period,omitempty" json:"cpu_rt_period,omitempty"`
+	CPURTRuntime      int64                    `yaml:"cpu_rt_runtime,omitempty" json:"cpu_rt_runtime,omitempty"`
+	CPUS              float32                  `yaml:"cpus,omitempty" json:"cpus,omitempty"`
+	CPUSet            string                   `yaml:"cpuset,omitempty" json:"cpuset,omitempty"`
+	CPUShares         int64                    `yaml:"cpu_shares,omitempty" json:"cpu_shares,omitempty"`
 	Configs           []ServiceConfigObjConfig `yaml:"configs,omitempty" json:"configs,omitempty"`
 	ContainerName     string                   `yaml:"container_name,omitempty" json:"container_name,omitempty"`
 	CredentialSpec    *CredentialSpecConfig    `yaml:"credential_spec,omitempty" json:"credential_spec,omitempty"`
-	DependsOn         DependsOnConfig          `yaml:"depends_on,omitempty" json:"depends_on,omitempty"`
-	Deploy            *DeployConfig            `yaml:"deploy,omitempty" json:"deploy,omitempty"`
 	DeviceCgroupRules []string                 `yaml:"device_cgroup_rules,omitempty" json:"device_cgroup_rules,omitempty"`
 	Devices           []string                 `yaml:"devices,omitempty" json:"devices,omitempty"`
 	DNS               StringList               `yaml:"dns,omitempty" json:"dns,omitempty"`
@@ -70,12 +70,9 @@ type ServiceConfig struct {
 
 	// Entrypoint for the service containers.
 	// If set, overrides ENTRYPOINT from the image.
-	//
 	// Set to `[]` or an empty string to clear the entrypoint from the image.
 	Entrypoint ShellCommand `yaml:"entrypoint,omitempty" json:"entrypoint"` // NOTE: we can NOT omitempty for JSON! see ShellCommand type for details.
 
-	Environment     MappingWithEquals                `yaml:"environment,omitempty" json:"environment,omitempty"`
-	EnvFile         StringList                       `yaml:"env_file,omitempty" json:"env_file,omitempty"`
 	Expose          StringOrNumberList               `yaml:"expose,omitempty" json:"expose,omitempty"`
 	Extends         *ExtendsConfig                   `yaml:"extends,omitempty" json:"extends,omitempty"`
 	ExternalLinks   []string                         `yaml:"external_links,omitempty" json:"external_links,omitempty"`
@@ -112,7 +109,6 @@ type ServiceConfig struct {
 	ReadOnly        bool                             `yaml:"read_only,omitempty" json:"read_only,omitempty"`
 	Restart         string                           `yaml:"restart,omitempty" json:"restart,omitempty"`
 	Runtime         string                           `yaml:"runtime,omitempty" json:"runtime,omitempty"`
-	Scale           *int                             `yaml:"scale,omitempty" json:"scale,omitempty"`
 	Secrets         []ServiceSecretConfig            `yaml:"secrets,omitempty" json:"secrets,omitempty"`
 	SecurityOpt     []string                         `yaml:"security_opt,omitempty" json:"security_opt,omitempty"`
 	ShmSize         UnitBytes                        `yaml:"shm_size,omitempty" json:"shm_size,omitempty"`
@@ -123,13 +119,23 @@ type ServiceConfig struct {
 	Tmpfs           StringList                       `yaml:"tmpfs,omitempty" json:"tmpfs,omitempty"`
 	Tty             bool                             `yaml:"tty,omitempty" json:"tty,omitempty"`
 	Ulimits         map[string]*UlimitsConfig        `yaml:"ulimits,omitempty" json:"ulimits,omitempty"`
-	User            string                           `yaml:"user,omitempty" json:"user,omitempty"`
 	UserNSMode      string                           `yaml:"userns_mode,omitempty" json:"userns_mode,omitempty"`
 	Uts             string                           `yaml:"uts,omitempty" json:"uts,omitempty"`
 	VolumeDriver    string                           `yaml:"volume_driver,omitempty" json:"volume_driver,omitempty"`
 	Volumes         []ServiceVolumeConfig            `yaml:"volumes,omitempty" json:"volumes,omitempty"`
 	VolumesFrom     []string                         `yaml:"volumes_from,omitempty" json:"volumes_from,omitempty"`
-	WorkingDir      string                           `yaml:"working_dir,omitempty" json:"working_dir,omitempty"`
+}
+
+// ServiceConfig is the configuration of a service
+type ServiceConfig struct {
+	ContainerConfig `yaml:",inline"`
+	Name            string   `yaml:"name,omitempty" json:"-"`
+	Profiles        []string `yaml:"profiles,omitempty" json:"profiles,omitempty"`
+
+	DependsOn DependsOnConfig `yaml:"depends_on,omitempty" json:"depends_on,omitempty"`
+	Deploy    *DeployConfig   `yaml:"deploy,omitempty" json:"deploy,omitempty"`
+	Develop   *DevelopConfig  `yaml:"develop,omitempty" json:"develop,omitempty"`
+	Scale     *int            `yaml:"scale,omitempty" json:"scale,omitempty"`
 
 	Extensions Extensions `yaml:"#extensions,inline" json:"-"`
 }

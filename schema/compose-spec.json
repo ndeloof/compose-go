@@ -85,14 +85,51 @@
   "additionalProperties": false,
 
   "definitions": {
-
     "service": {
       "id": "#/definitions/service",
-      "type": "object",
-
+      "allOf": [{"$ref": "#/definitions/container"}],
       "properties": {
         "develop": {"$ref": "#/definitions/development"},
+        "depends_on": {
+          "oneOf": [
+            {"$ref": "#/definitions/list_of_strings"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[a-zA-Z0-9._-]+$": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "restart": {"type": "boolean"},
+                    "required": {
+                      "type":  "boolean",
+                      "default": true
+                    },
+                    "condition": {
+                      "type": "string",
+                      "enum": ["service_started", "service_healthy", "service_completed_successfully"]
+                    }
+                  },
+                  "required": ["condition"]
+                }
+              }
+            }
+          ]
+        },
         "deploy": {"$ref": "#/definitions/deployment"},
+        "scale": {
+          "type": "integer"
+        }
+      },
+      "patternProperties": {"^x-": {}},
+      "unevaluatedProperties": false
+    },
+
+    "container": {
+      "id": "#/definitions/container",
+      "allOf": [{"$ref": "#/definitions/exec"}],
+      "properties": {
         "annotations": {"$ref": "#/definitions/list_or_dict"},
         "attach": {"type": "boolean"},
         "build": {
@@ -159,7 +196,6 @@
         "cap_drop": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "cgroup": {"type": "string", "enum": ["host", "private"]},
         "cgroup_parent": {"type": "string"},
-        "command": {"$ref": "#/definitions/command"},
         "configs": {"$ref": "#/definitions/service_config_or_secret"},
         "container_name": {"type": "string"},
         "cpu_count": {"type": "integer", "minimum": 0},
@@ -181,33 +217,6 @@
           "additionalProperties": false,
           "patternProperties": {"^x-": {}}
         },
-        "depends_on": {
-          "oneOf": [
-            {"$ref": "#/definitions/list_of_strings"},
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "patternProperties": {
-                "^[a-zA-Z0-9._-]+$": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "restart": {"type": "boolean"},
-                    "required": {
-                      "type":  "boolean",
-                      "default": true
-                    },
-                    "condition": {
-                      "type": "string",
-                      "enum": ["service_started", "service_healthy", "service_completed_successfully"]
-                    }
-                  },
-                  "required": ["condition"]
-                }
-              }
-            }
-          ]
-        },
         "device_cgroup_rules": {"$ref": "#/definitions/list_of_strings"},
         "devices": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "dns": {"$ref": "#/definitions/string_or_list"},
@@ -215,9 +224,6 @@
         "dns_search": {"$ref": "#/definitions/string_or_list"},
         "domainname": {"type": "string"},
         "entrypoint": {"$ref": "#/definitions/command"},
-        "env_file": {"$ref": "#/definitions/string_or_list"},
-        "environment": {"$ref": "#/definitions/list_or_dict"},
-
         "expose": {
           "type": "array",
           "items": {
@@ -345,9 +351,6 @@
         "runtime": {
           "type": "string"
         },
-        "scale": {
-          "type": "integer"
-        },
         "security_opt": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "shm_size": {"type": ["number", "string"]},
         "secrets": {"$ref": "#/definitions/service_config_or_secret"},
@@ -359,7 +362,6 @@
         "tmpfs": {"$ref": "#/definitions/string_or_list"},
         "tty": {"type": "boolean"},
         "ulimits": {"$ref": "#/definitions/ulimits"},
-        "user": {"type": "string"},
         "uts": {"type": "string"},
         "userns_mode": {"type": "string"},
         "volumes": {
@@ -420,12 +422,20 @@
           "type": "array",
           "items": {"type": "string"},
           "uniqueItems": true
-        },
-        "working_dir": {"type": "string"}
-      },
-      "patternProperties": {"^x-": {}},
-      "additionalProperties": false
+        }
+      }
     },
+
+    "exec": {
+      "id": "#/definitions/exec",
+      "type": "object",
+      "properties": {
+        "command": {"$ref": "#/definitions/command"},
+        "environment": {"$ref": "#/definitions/list_or_dict"},
+        "env_file": {"$ref": "#/definitions/string_or_list"},
+        "user": {"type": "string"},
+        "working_dir": {"type": "string"}
+      }},
 
     "healthcheck": {
       "id": "#/definitions/healthcheck",

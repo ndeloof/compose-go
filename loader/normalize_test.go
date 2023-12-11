@@ -45,11 +45,16 @@ func TestNormalizeNetworkNames(t *testing.T) {
 		Services: types.Services{
 			"foo": {
 				Name: "foo",
-				Build: &types.BuildConfig{
-					Context: "./testdata",
-					Args: map[string]*string{
-						"FOO": nil,
-						"ZOT": nil,
+				ContainerConfig: types.ContainerConfig{
+					Build: &types.BuildConfig{
+						Context: "./testdata",
+						Args: map[string]*string{
+							"FOO": nil,
+							"ZOT": nil,
+						},
+					},
+					ExecConfig: types.ExecConfig{
+						Environment: types.MappingWithEquals{},
 					},
 				},
 			},
@@ -135,13 +140,17 @@ func TestNormalizeDependsOn(t *testing.T) {
 						Required:  true,
 					},
 				},
-				NetworkMode: "service:zot",
+				ContainerConfig: types.ContainerConfig{
+					NetworkMode: "service:zot",
+				},
 			},
 			"bar": {
 				Name: "bar",
-				VolumesFrom: []string{
-					"zot",
-					"container:xxx",
+				ContainerConfig: types.ContainerConfig{
+					VolumesFrom: []string{
+						"zot",
+						"container:xxx",
+					},
 				},
 			},
 			"zot": {
@@ -153,16 +162,17 @@ func TestNormalizeDependsOn(t *testing.T) {
 	expected := `name: myProject
 services:
   bar:
-    depends_on:
-      zot:
-        condition: service_started
-        required: true
     networks:
       default: null
     volumes_from:
       - zot
       - container:xxx
+    depends_on:
+      zot:
+        condition: service_started
+        required: true
   foo:
+    network_mode: service:zot
     depends_on:
       bar:
         condition: service_healthy
@@ -171,7 +181,6 @@ services:
         condition: service_started
         restart: true
         required: true
-    network_mode: service:zot
   zot:
     networks:
       default: null
@@ -191,13 +200,15 @@ func TestNormalizeImplicitDependencies(t *testing.T) {
 		Name: "myProject",
 		Services: types.Services{
 			"test": types.ServiceConfig{
-				Name:        "test",
-				Ipc:         "service:foo",
-				Cgroup:      "service:bar",
-				Uts:         "service:baz",
-				Pid:         "service:qux",
-				VolumesFrom: []string{"quux"},
-				Links:       []string{"corge"},
+				Name: "test",
+				ContainerConfig: types.ContainerConfig{
+					Ipc:         "service:foo",
+					Cgroup:      "service:bar",
+					Uts:         "service:baz",
+					Pid:         "service:qux",
+					VolumesFrom: []string{"quux"},
+					Links:       []string{"corge"},
+				},
 				DependsOn: map[string]types.ServiceDependency{
 					// explicit dependency MUST not be overridden
 					"foo": {Condition: types.ServiceConditionHealthy, Restart: false, Required: true},
@@ -224,8 +235,10 @@ func TestImplicitContextPath(t *testing.T) {
 		Name: "myProject",
 		Services: types.Services{
 			"test": types.ServiceConfig{
-				Name:  "test",
-				Build: &types.BuildConfig{},
+				Name: "test",
+				ContainerConfig: types.ContainerConfig{
+					Build: &types.BuildConfig{},
+				},
 			},
 		},
 	}

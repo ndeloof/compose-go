@@ -262,16 +262,18 @@ func TestNewMapping(t *testing.T) {
 
 func TestNetworksByPriority(t *testing.T) {
 	s := ServiceConfig{
-		Networks: map[string]*ServiceNetworkConfig{
-			"foo": nil,
-			"bar": {
-				Priority: 10,
-			},
-			"zot": {
-				Priority: 100,
-			},
-			"qix": {
-				Priority: 1000,
+		ContainerConfig: ContainerConfig{
+			Networks: map[string]*ServiceNetworkConfig{
+				"foo": nil,
+				"bar": {
+					Priority: 10,
+				},
+				"zot": {
+					Priority: 100,
+				},
+				"qix": {
+					Priority: 1000,
+				},
 			},
 		},
 	}
@@ -319,7 +321,11 @@ func TestMarshalServiceEntrypoint(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			s := ServiceConfig{Entrypoint: tc.entrypoint}
+			s := ServiceConfig{
+				ContainerConfig: ContainerConfig{
+					Entrypoint: tc.entrypoint,
+				},
+			}
 			actualYAML, err := yaml.Marshal(s)
 			assert.NilError(t, err, "YAML marshal failed")
 			assertEqual(t, actualYAML, tc.expectedYAML)

@@ -20,11 +20,6 @@ import (
 	"github.com/compose-spec/compose-go/v2/tree"
 )
 
-func transformService(data any, p tree.Path) (any, error) {
-	value := data.(map[string]any)
-	return transformMapping(value, p)
-}
-
 func transformServiceNetworks(data any, _ tree.Path) (any, error) {
 	if slice, ok := data.([]any); ok {
 		networks := make(map[string]any, len(slice))

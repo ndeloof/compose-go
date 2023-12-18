@@ -128,6 +128,9 @@ type ContainerConfig struct {
 
 // ServiceConfig is the configuration of a service
 type ServiceConfig struct {
+	// Before declares sequence of "init" container ran before the service container is started
+	Before []ContainerConfig `yaml:"before,omitempty" json:"before,omitempty"`
+
 	ContainerConfig `yaml:",inline"`
 	Name            string   `yaml:"name,omitempty" json:"-"`
 	Profiles        []string `yaml:"profiles,omitempty" json:"profiles,omitempty"`

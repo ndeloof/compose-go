@@ -25,8 +25,10 @@ type transformFunc func(data any, p tree.Path) (any, error)
 var transformers = map[tree.Path]transformFunc{}
 
 func init() {
-	transformers["services.*"] = transformService
+	transformers["services.*.build"] = transformBuild
 	transformers["services.*.build.secrets.*"] = transformFileMount
+	transformers["services.*.build.ssh"] = transformSSH
+	transformers["services.*.build.ulimits.*"] = transformUlimits
 	transformers["services.*.depends_on"] = transformDependsOn
 	transformers["services.*.extends"] = transformExtends
 	transformers["services.*.networks"] = transformServiceNetworks
@@ -34,10 +36,19 @@ func init() {
 	transformers["services.*.secrets.*"] = transformFileMount
 	transformers["services.*.configs.*"] = transformFileMount
 	transformers["services.*.ports"] = transformPorts
-	transformers["services.*.build"] = transformBuild
-	transformers["services.*.build.ssh"] = transformSSH
 	transformers["services.*.ulimits.*"] = transformUlimits
-	transformers["services.*.build.ulimits.*"] = transformUlimits
+
+	transformers["services.*.before.*.build"] = transformBuild
+	transformers["services.*.before.*.build.secrets.*"] = transformFileMount
+	transformers["services.*.before.*.build.ssh"] = transformSSH
+	transformers["services.*.before.*.build.ulimits.*"] = transformUlimits
+	transformers["services.*.before.*.networks"] = transformServiceNetworks
+	transformers["services.*.before.*.volumes.*"] = transformVolumeMount
+	transformers["services.*.before.*.secrets.*"] = transformFileMount
+	transformers["services.*.before.*.configs.*"] = transformFileMount
+	transformers["services.*.before.*.ports"] = transformPorts
+	transformers["services.*.before.*.ulimits.*"] = transformUlimits
+
 	transformers["volumes.*"] = transformMaybeExternal
 	transformers["networks.*"] = transformMaybeExternal
 	transformers["secrets.*"] = transformMaybeExternal

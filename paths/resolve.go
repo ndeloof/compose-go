@@ -35,14 +35,20 @@ func ResolveRelativePaths(project map[string]any, base string) error {
 		"services.*.build.additional_contexts.*": r.absContextPath,
 		"services.*.env_file":                    r.absPath,
 		"services.*.extends.file":                r.absPath,
-		"services.*.develop.watch.*.path":        r.absPath,
-		"services.*.volumes.*":                   r.absVolumeMount,
-		"configs.*.file":                         r.maybeUnixPath,
-		"secrets.*.file":                         r.maybeUnixPath,
-		"include.path":                           r.absPath,
-		"include.project_directory":              r.absPath,
-		"include.env_file":                       r.absPath,
-		"volumes.*":                              r.volumeDriverOpts,
+
+		"services.*.before.*.build.context":               r.absContextPath,
+		"services.*.before.*.build.additional_contexts.*": r.absContextPath,
+		"services.*.before.*.env_file":                    r.absPath,
+		"services.*.before.*.extends.file":                r.absPath,
+
+		"services.*.develop.watch.*.path": r.absPath,
+		"services.*.volumes.*":            r.absVolumeMount,
+		"configs.*.file":                  r.maybeUnixPath,
+		"secrets.*.file":                  r.maybeUnixPath,
+		"include.path":                    r.absPath,
+		"include.project_directory":       r.absPath,
+		"include.env_file":                r.absPath,
+		"volumes.*":                       r.volumeDriverOpts,
 	}
 	_, err := r.resolveRelativePaths(project, tree.NewPath())
 	return err

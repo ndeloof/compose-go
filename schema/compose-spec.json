@@ -89,6 +89,10 @@
       "id": "#/definitions/service",
       "allOf": [{"$ref": "#/definitions/container"}],
       "properties": {
+        "before": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/container"}
+        },
         "develop": {"$ref": "#/definitions/development"},
         "depends_on": {
           "oneOf": [
@@ -120,20 +124,10 @@
         "deploy": {"$ref": "#/definitions/deployment"},
         "scale": {
           "type": "integer"
-        },
-        "hooks": {"$ref": "#/definitions/service_hooks"}
+        }
       },
       "patternProperties": {"^x-": {}},
       "unevaluatedProperties": false
-    },
-
-    "service_hooks": {
-      "id": "#/definitions/service_hooks",
-      "type": "object",
-      "properties": {
-        "pre_start": {"type": "array", "items": {"$ref": "#/definitions/container"}},
-        "pre_stop": {"type": "array", "items": {"$ref": "#/definitions/exec"}}
-      }
     },
 
     "container": {

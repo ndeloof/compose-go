@@ -45,6 +45,13 @@ func init() {
 	mergeSpecials["services.*.healthcheck.test"] = override
 	mergeSpecials["services.*.environment"] = mergeEnvironment
 	mergeSpecials["services.*.ulimits.*"] = mergeUlimit
+
+	mergeSpecials["services.*.before.*.logging"] = mergeLogging
+	mergeSpecials["services.*.before.*.command"] = override
+	mergeSpecials["services.*.before.*.entrypoint"] = override
+	mergeSpecials["services.*.before.*.healthcheck.test"] = override
+	mergeSpecials["services.*.before.*.environment"] = mergeEnvironment
+	mergeSpecials["services.*.before.*.ulimits.*"] = mergeUlimit
 }
 
 // mergeYaml merges map[string]any yaml trees handling special rules

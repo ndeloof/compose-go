@@ -26,6 +26,7 @@ jobs:
         name: Build
         run: |
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} make build
+          ls -al bin/
       -
         name: Upload artifacts
         uses: actions/upload-artifact@v4

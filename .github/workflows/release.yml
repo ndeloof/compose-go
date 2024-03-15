@@ -29,9 +29,9 @@ jobs:
           ls -al bin/
       -
         name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: compose-spec
+          name: compose-spec-${{ matrix.os }}-${{ matrix.arch }}
           path: ./bin/*
           if-no-files-found: error
 
@@ -49,8 +49,8 @@ jobs:
         name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: compose-spec
-          path: bin/release
+          path: bin/
+          merge-multiple: true
       -
         name: GitHub Release
         uses: ncipollo/release-action@v1

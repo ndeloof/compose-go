@@ -63,7 +63,7 @@ func GetEnvFromFile(currentEnv map[string]string, filenames []string) (map[strin
 			}
 			v, ok = envMap[k]
 			return v, ok
-		})
+		}, WithAllowDash)
 		if err != nil {
 			return envMap, fmt.Errorf("failed to read %s: %w", dotEnvFile, err)
 		}

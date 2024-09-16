@@ -40,7 +40,7 @@ func Parse(r io.Reader) (map[string]string, error) {
 }
 
 // ParseWithLookup reads an env file from io.Reader, returning a map of keys and values.
-func ParseWithLookup(r io.Reader, lookupFn LookupFn) (map[string]string, error) {
+func ParseWithLookup(r io.Reader, lookupFn LookupFn, opts ...option) (map[string]string, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func ParseWithLookup(r io.Reader, lookupFn LookupFn) (map[string]string, error) 
 	// editors tend to add it, and it'll cause parsing to fail)
 	data = bytes.TrimPrefix(data, utf8BOM)
 
-	return UnmarshalBytesWithLookup(data, lookupFn)
+	return UnmarshalBytesWithLookup(data, lookupFn, opts...)
 }
 
 // Load will read your env file(s) and load them into ENV for this process.
@@ -110,14 +110,14 @@ func Read(filenames ...string) (map[string]string, error) {
 }
 
 // UnmarshalBytesWithLookup parses env file from byte slice of chars, returning a map of keys and values.
-func UnmarshalBytesWithLookup(src []byte, lookupFn LookupFn) (map[string]string, error) {
-	return UnmarshalWithLookup(string(src), lookupFn)
+func UnmarshalBytesWithLookup(src []byte, lookupFn LookupFn, opts ...option) (map[string]string, error) {
+	return UnmarshalWithLookup(string(src), lookupFn, opts...)
 }
 
 // UnmarshalWithLookup parses env file from string, returning a map of keys and values.
-func UnmarshalWithLookup(src string, lookupFn LookupFn) (map[string]string, error) {
+func UnmarshalWithLookup(src string, lookupFn LookupFn, opts ...option) (map[string]string, error) {
 	out := make(map[string]string)
-	err := newParser().parse(src, out, lookupFn)
+	err := newParser(opts...).parse(src, out, lookupFn)
 	return out, err
 }
 

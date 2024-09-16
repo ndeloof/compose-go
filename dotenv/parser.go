@@ -21,13 +21,24 @@ var (
 )
 
 type parser struct {
-	line int
+	line      int
+	allowDash bool
 }
 
-func newParser() *parser {
-	return &parser{
+func newParser(opts ...option) *parser {
+	p := &parser{
 		line: 1,
 	}
+	for _, opt := range opts {
+		opt(p)
+	}
+	return p
+}
+
+type option func(p *parser)
+
+func WithAllowDash(p *parser) {
+	p.allowDash = true
 }
 
 func (p *parser) parse(src string, out map[string]string, lookupFn LookupFn) error {
@@ -123,6 +134,9 @@ loop:
 		default:
 			// variable name should match [A-Za-z0-9_.-]
 			if unicode.IsLetter(rune) || unicode.IsNumber(rune) {
+				continue
+			}
+			if p.allowDash && rune == '-' {
 				continue
 			}
 

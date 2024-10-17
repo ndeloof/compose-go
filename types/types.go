@@ -269,6 +269,7 @@ func (s ServiceConfig) GetDependents(p *Project) []string {
 
 // BuildConfig is a type for build
 type BuildConfig struct {
+	Builder            string                    `yaml:"builder,omitempty" json:"builder,omitempty"`
 	Context            string                    `yaml:"context,omitempty" json:"context,omitempty"`
 	Dockerfile         string                    `yaml:"dockerfile,omitempty" json:"dockerfile,omitempty"`
 	DockerfileInline   string                    `yaml:"dockerfile_inline,omitempty" json:"dockerfile_inline,omitempty"`

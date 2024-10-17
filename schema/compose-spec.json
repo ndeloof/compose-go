@@ -99,6 +99,7 @@
             {
               "type": "object",
               "properties": {
+                "builder": {"type": "string"},
                 "context": {"type": "string"},
                 "dockerfile": {"type": "string"},
                 "dockerfile_inline": {"type": "string"},

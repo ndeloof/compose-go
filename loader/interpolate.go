@@ -53,7 +53,6 @@ var interpolateTypeCastMapping = map[tree.Path]interp.Cast{
 	servicePath("privileged"):                                      toBoolean,
 	servicePath("read_only"):                                       toBoolean,
 	servicePath("scale"):                                           toInt,
-	servicePath("secrets", tree.PathMatchList, "mode"):             toInt,
 	servicePath("stdin_open"):                                      toBoolean,
 	servicePath("tty"):                                             toBoolean,
 	servicePath("ulimits", tree.PathMatchAll):                      toInt,

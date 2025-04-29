@@ -225,9 +225,9 @@ func (p Project) GetDisabledService(name string) (ServiceConfig, error) {
 func (p *Project) GetService(name string) (ServiceConfig, error) {
 	service, ok := p.Services[name]
 	if !ok {
-		_, ok := p.DisabledServices[name]
+		service, ok = p.DisabledServices[name]
 		if ok {
-			return ServiceConfig{}, fmt.Errorf("no such service: %s: %w", name, errdefs.ErrDisabled)
+			return service, fmt.Errorf("no such service: %s: %w", name, errdefs.ErrDisabled)
 		}
 		return ServiceConfig{}, fmt.Errorf("no such service: %s: %w", name, errdefs.ErrNotFound)
 	}

@@ -1024,6 +1024,42 @@ func deriveDeepCopy_6(dst, src *BuildConfig) {
 
 // deriveDeepCopy_7 recursively copies the contents of src into dst.
 func deriveDeepCopy_7(dst, src *DevelopConfig) {
+	if src.Command == nil {
+		dst.Command = nil
+	} else {
+		if dst.Command != nil {
+			if len(src.Command) > len(dst.Command) {
+				if cap(dst.Command) >= len(src.Command) {
+					dst.Command = (dst.Command)[:len(src.Command)]
+				} else {
+					dst.Command = make([]string, len(src.Command))
+				}
+			} else if len(src.Command) < len(dst.Command) {
+				dst.Command = (dst.Command)[:len(src.Command)]
+			}
+		} else {
+			dst.Command = make([]string, len(src.Command))
+		}
+		copy(dst.Command, src.Command)
+	}
+	if src.Ports == nil {
+		dst.Ports = nil
+	} else {
+		if dst.Ports != nil {
+			if len(src.Ports) > len(dst.Ports) {
+				if cap(dst.Ports) >= len(src.Ports) {
+					dst.Ports = (dst.Ports)[:len(src.Ports)]
+				} else {
+					dst.Ports = make([]ServicePortConfig, len(src.Ports))
+				}
+			} else if len(src.Ports) < len(dst.Ports) {
+				dst.Ports = (dst.Ports)[:len(src.Ports)]
+			}
+		} else {
+			dst.Ports = make([]ServicePortConfig, len(src.Ports))
+		}
+		deriveDeepCopy_22(dst.Ports, src.Ports)
+	}
 	if src.Watch == nil {
 		dst.Watch = nil
 	} else {

@@ -60,6 +60,7 @@ func init() {
 	unique["services.*.sysctls"] = keyValueIndexer
 	unique["services.*.tmpfs"] = keyValueIndexer
 	unique["services.*.volumes"] = volumeIndexer
+	unique["services.*.develop.ports"] = portIndexer
 	unique["services.*.devices"] = deviceMappingIndexer
 }
 

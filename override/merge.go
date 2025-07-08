@@ -49,6 +49,7 @@ func init() {
 	mergeSpecials["services.*.build.extra_hosts"] = mergeExtraHosts
 	mergeSpecials["services.*.build.labels"] = mergeToSequence
 	mergeSpecials["services.*.command"] = override
+	mergeSpecials["services.*.develop.command"] = override
 	mergeSpecials["services.*.depends_on"] = mergeDependsOn
 	mergeSpecials["services.*.deploy.labels"] = mergeToSequence
 	mergeSpecials["services.*.dns"] = mergeToSequence

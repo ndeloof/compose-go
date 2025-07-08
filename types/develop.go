@@ -17,7 +17,9 @@
 package types
 
 type DevelopConfig struct {
-	Watch []Trigger `yaml:"watch,omitempty" json:"watch,omitempty"`
+	Command ShellCommand        `yaml:"command,omitempty" json:"command,omitempty"`
+	Ports   []ServicePortConfig `yaml:"ports,omitempty" json:"ports,omitempty"`
+	Watch   []Trigger           `yaml:"watch,omitempty" json:"watch,omitempty"`
 
 	Extensions Extensions `yaml:"#extensions,inline,omitempty" json:"-"`
 }

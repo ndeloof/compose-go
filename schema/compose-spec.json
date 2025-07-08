@@ -633,52 +633,7 @@
           "type": "string",
           "description": "Target platform to run on, e.g., 'linux/amd64', 'linux/arm64', or 'windows/amd64'."
         },
-        "ports": {
-          "type": "array",
-          "description": "Expose container ports. Short format ([HOST:]CONTAINER[/PROTOCOL]).",
-          "items": {
-            "oneOf": [
-              {"type": "number"},
-              {"type": "string"},
-              {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "A human-readable name for this port mapping."
-                  },
-                  "mode": {
-                    "type": "string",
-                    "description": "The port binding mode, either 'host' for publishing a host port or 'ingress' for load balancing."
-                  },
-                  "host_ip": {
-                    "type": "string",
-                    "description": "The host IP to bind to."
-                  },
-                  "target": {
-                    "type": ["integer", "string"],
-                    "description": "The port inside the container."
-                  },
-                  "published": {
-                    "type": ["string", "integer"],
-                    "description": "The publicly exposed port."
-                  },
-                  "protocol": {
-                    "type": "string",
-                    "description": "The port protocol (tcp or udp)."
-                  },
-                  "app_protocol": {
-                    "type": "string",
-                    "description": "Application protocol to use with the port (e.g., http, https, mysql)."
-                  }
-                },
-                "additionalProperties": false,
-                "patternProperties": {"^x-": {}}
-              }
-            ]
-          },
-          "uniqueItems": true
-        },
+        "ports": {"$ref":  "#/definitions/service_ports"},
         "post_start": {
           "type": "array",
           "items": {"$ref": "#/definitions/service_hook"},
@@ -958,6 +913,14 @@
       "type": ["object", "null"],
       "description": "Development configuration for the service, used for development workflows.",
       "properties": {
+        "ports": {
+          "$ref":  "#/definitions/service_ports",
+          "description": "Additional ports to expose in development mode."
+        },
+        "command": {
+          "$ref": "#/definitions/command",
+          "description": "Command to execute in development mode."
+        },
         "watch": {
           "type": "array",
           "description": "Configure watch mode for the service, which monitors file changes and performs actions in response.",
@@ -1614,6 +1577,52 @@
       "description": "Command to run in the container, which can be specified as a string (shell form) or array (exec form)."
     },
 
+    "service_ports": {
+      "type": "array",
+      "description": "Expose container ports. Short format ([HOST:]CONTAINER[/PROTOCOL]).",
+      "items": {
+        "oneOf": [
+          {"type": "number"},
+          {"type": "string"},
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "A human-readable name for this port mapping."
+              },
+              "mode": {
+                "type": "string",
+                "description": "The port binding mode, either 'host' for publishing a host port or 'ingress' for load balancing."
+              },
+              "host_ip": {
+                "type": "string",
+                "description": "The host IP to bind to."
+              },
+              "target": {
+                "type": ["integer", "string"],
+                "description": "The port inside the container."
+              },
+              "published": {
+                "type": ["string", "integer"],
+                "description": "The publicly exposed port."
+              },
+              "protocol": {
+                "type": "string",
+                "description": "The port protocol (tcp or udp)."
+              },
+              "app_protocol": {
+                "type": "string",
+                "description": "Application protocol to use with the port (e.g., http, https, mysql)."
+              }
+            },
+            "additionalProperties": false,
+            "patternProperties": {"^x-": {}}
+          }
+        ]
+      },
+      "uniqueItems": true
+    },
     "service_hook": {
       "type": "object",
       "description": "Configuration for service lifecycle hooks, which are commands executed at specific points in a container's lifecycle.",
